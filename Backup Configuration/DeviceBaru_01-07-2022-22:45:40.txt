@@ -1,0 +1,296 @@
+Building configuration...
+
+Current configuration : 7454 bytes
+!
+! Last configuration change at 21:03:04 UTC Fri Jul 1 2022 by NETCONF
+!
+version 16.12
+no service pad
+service timestamps debug datetime msec
+service timestamps log datetime msec
+service password-encryption
+! Call-home is enabled by Smart-Licensing.
+service call-home
+platform qfp utilization monitor load 80
+platform punt-keepalive disable-kernel-core
+platform inspect match-statistics per-filter
+platform console serial
+!
+hostname site2-cedge01
+!
+boot-start-marker
+boot-end-marker
+!
+!
+vrf definition 1
+ rd 1:1
+ !
+ address-family ipv4
+ exit-address-family
+ !
+ address-family ipv6
+ exit-address-family
+!
+vrf definition Mgmt-intf
+ rd 1:512
+ !
+ address-family ipv4
+ exit-address-family
+ !
+ address-family ipv6
+ exit-address-family
+!
+logging buffered 512000
+logging persistent
+no logging rate-limit
+!
+aaa new-model
+!
+!
+aaa authentication login default local
+aaa authorization exec default local 
+!
+!
+!
+!
+!
+aaa session-id common
+call-home
+ ! If contact email address in call-home is configured as sch-smart-licensing@cisco.com
+ ! the email address configured in Cisco Smart License Portal will be used as contact email address to send SCH notifications.
+ contact-email-addr sch-smart-licensing@cisco.com
+ profile "CiscoTAC-1"
+  active
+  destination transport-method http
+  no destination transport-method email
+fhrp version vrrp v3
+no ip source-route
+!
+!
+!
+!
+!
+!
+!
+no ip dhcp use class
+!
+!
+!
+no ip igmp ssm-map query dns
+login on-success log
+ipv6 unicast-routing
+!
+!
+!
+!
+!
+!
+!
+subscriber templating
+! 
+! 
+! 
+! 
+!
+!
+multilink bundle-name authenticated
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+crypto pki trustpoint TP-self-signed-2088422807
+ enrollment selfsigned
+ subject-name cn=IOS-Self-Signed-Certificate-2088422807
+ revocation-check none
+ rsakeypair TP-self-signed-2088422807
+!
+crypto pki trustpoint SLA-TrustPoint
+ enrollment pkcs12
+ revocation-check crl
+!
+!
+crypto pki certificate chain TP-self-signed-2088422807
+ certificate self-signed 01
+  30820330 30820218 A0030201 02020101 300D0609 2A864886 F70D0101 05050030 
+  31312F30 2D060355 04031326 494F532D 53656C66 2D536967 6E65642D 43657274 
+  69666963 6174652D 32303838 34323238 3037301E 170D3232 30373031 32313033 
+  30385A17 0D333030 31303130 30303030 305A3031 312F302D 06035504 03132649 
+  4F532D53 656C662D 5369676E 65642D43 65727469 66696361 74652D32 30383834 
+  32323830 37308201 22300D06 092A8648 86F70D01 01010500 0382010F 00308201 
+  0A028201 0100D92A 49BF513D 9B1D9BD8 2F5DE0F5 1C9D9D99 C1D9CC8B 604ABF6D 
+  A77B36A6 0E5A74A6 99362235 EC14523F E41749DD 42E7C2E7 5C82F285 ABB81E2A 
+  195EE665 10CD73C2 F49C2BBE 41D1B7A2 792E64D2 4B110518 5516A230 400E84A1 
+  4BA2AC11 A24E8BEA 2884FD69 FD9CEAFE 664AEAC2 67D14F48 EA0BE13C B7BA16F0 
+  640C6FB7 1D646ABF CC76A380 DB1DDBEB 4A4DDFCE 05B539D9 4B4D55A4 D5274C97 
+  BF35DCFF 9E01266A E5950668 C5E579D4 489ED6DE 0AAB9A3B 253906F3 B7F2BBF5 
+  F7DC23DC 00D6D289 DCA8E3FC 4B66F3D7 3BCE3A9B C648D87B 52552B34 567FF477 
+  A8FC60AE 9B82BF64 F1773871 0A55F270 F994152E EE037E9E 638BB92A BB1B4860 
+  43C60FA7 CA510203 010001A3 53305130 0F060355 1D130101 FF040530 030101FF 
+  301F0603 551D2304 18301680 1481FF53 6CE03045 B992EEAB 22F37016 572591C5 
+  C5301D06 03551D0E 04160414 81FF536C E03045B9 92EEAB22 F3701657 2591C5C5 
+  300D0609 2A864886 F70D0101 05050003 82010100 90ABBB0A 510FF883 B1F798C5 
+  6F191313 5A6DABAA C8059E0C 5319A523 B11861FA 5872E80E 40DE8FA5 AF6E7101 
+  DF29B9B7 295129AD 68646D7D 595F5E9F BAEB50D4 54A47AF4 01757127 833605F9 
+  2CABB4D2 35F211BD E466AB83 9020AB4C EEAF05E1 96957C1C 338DB531 5BCB2251 
+  BB806B7E 5E12002A B9BFACF6 F919A5D2 87DADFA1 F8FA899E 63D07489 EFA0E76F 
+  A689FB4F A4F08A57 1F3658BC 532E9A29 3A550DD4 27BC4E41 9F15B617 6FBF878B 
+  EC5EB66D 3D86C68D 08548240 58055C5B 741D04F8 AC310C68 38481439 D91CB814 
+  07321913 9B799D3D 4F6457EF DBACB91A DE14D5E2 7802DAE9 74CFD587 A0CBE725 
+  7727E800 E5F0BD06 EA426001 3BD703EF B9F2FE30
+  	quit
+crypto pki certificate chain SLA-TrustPoint
+ certificate ca 01
+  30820321 30820209 A0030201 02020101 300D0609 2A864886 F70D0101 0B050030 
+  32310E30 0C060355 040A1305 43697363 6F312030 1E060355 04031317 43697363 
+  6F204C69 63656E73 696E6720 526F6F74 20434130 1E170D31 33303533 30313934 
+  3834375A 170D3338 30353330 31393438 34375A30 32310E30 0C060355 040A1305 
+  43697363 6F312030 1E060355 04031317 43697363 6F204C69 63656E73 696E6720 
+  526F6F74 20434130 82012230 0D06092A 864886F7 0D010101 05000382 010F0030 
+  82010A02 82010100 A6BCBD96 131E05F7 145EA72C 2CD686E6 17222EA1 F1EFF64D 
+  CBB4C798 212AA147 C655D8D7 9471380D 8711441E 1AAF071A 9CAE6388 8A38E520 
+  1C394D78 462EF239 C659F715 B98C0A59 5BBB5CBD 0CFEBEA3 700A8BF7 D8F256EE 
+  4AA4E80D DB6FD1C9 60B1FD18 FFC69C96 6FA68957 A2617DE7 104FDC5F EA2956AC 
+  7390A3EB 2B5436AD C847A2C5 DAB553EB 69A9A535 58E9F3E3 C0BD23CF 58BD7188 
+  68E69491 20F320E7 948E71D7 AE3BCC84 F10684C7 4BC8E00F 539BA42B 42C68BB7 
+  C7479096 B4CB2D62 EA2F505D C7B062A4 6811D95B E8250FC4 5D5D5FB8 8F27D191 
+  C55F0D76 61F9A4CD 3D992327 A8BB03BD 4E6D7069 7CBADF8B DF5F4368 95135E44 
+  DFC7C6CF 04DD7FD1 02030100 01A34230 40300E06 03551D0F 0101FF04 04030201 
+  06300F06 03551D13 0101FF04 05300301 01FF301D 0603551D 0E041604 1449DC85 
+  4B3D31E5 1B3E6A17 606AF333 3D3B4C73 E8300D06 092A8648 86F70D01 010B0500 
+  03820101 00507F24 D3932A66 86025D9F E838AE5C 6D4DF6B0 49631C78 240DA905 
+  604EDCDE FF4FED2B 77FC460E CD636FDB DD44681E 3A5673AB 9093D3B1 6C9E3D8B 
+  D98987BF E40CBD9E 1AECA0C2 2189BB5C 8FA85686 CD98B646 5575B146 8DFC66A8 
+  467A3DF4 4D565700 6ADF0F0D CF835015 3C04FF7C 21E878AC 11BA9CD2 55A9232C 
+  7CA7B7E6 C1AF74F6 152E99B7 B1FCF9BB E973DE7F 5BDDEB86 C71E3B49 1765308B 
+  5FB0DA06 B92AFE7F 494E8A9E 07B85737 F3A58BE1 1A48A229 C37C1E69 39F08678 
+  80DDCD16 D6BACECA EEBC7CF9 8428787B 35202CDC 60E4616A B623CDBD 230E3AFB 
+  418616A9 4093E049 4D10AB75 27E86F73 932E35B5 8862FDAE 0275156F 719BB2F0 
+  D697DF7F 28
+  	quit
+!
+license udi pid CSR1000V sn 90WQHAIV8FE
+diagnostic bootup level minimal
+memory free low-watermark processor 72347
+!
+!
+spanning-tree extend system-id
+!
+username cisco privilege 15 secret 9 $9$X8t5V6eWdPoRd.$wOxXAiJ8i7jeYcH70M82cMnxDgwX.31ymh9Y18oj3eg
+username developer privilege 15 secret 9 $14$/kLd$y1w2VoYGXjHbZk$VWLbkzLGIAmPESawg2hrJfBAGu9J0.5M2WqKWfCZkXU
+!
+redundancy
+!
+!
+!
+no crypto ikev2 diagnose error
+!
+!
+!
+! 
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+! 
+! 
+!
+!
+interface Tunnel2
+ ip unnumbered GigabitEthernet2
+ no ip redirects
+ ipv6 unnumbered GigabitEthernet2
+ no ipv6 redirects
+ tunnel source GigabitEthernet2
+ tunnel mode sdwan
+!
+interface GigabitEthernet1
+ description port.sbx-mgmt
+ vrf forwarding Mgmt-intf
+ ip address 10.10.20.175 255.255.255.0
+ negotiation auto
+ arp timeout 1200
+ no mop enabled
+ no mop sysid
+!
+interface GigabitEthernet2
+ description GigabitEthernet4.wan-rtr01
+ ip address 10.10.23.14 255.255.255.252
+ negotiation auto
+ arp timeout 1200
+ no mop enabled
+ no mop sysid
+!
+interface GigabitEthernet3
+ description port.site1-sw01
+ vrf forwarding 1
+ ip address 10.10.22.1 255.255.255.0
+ negotiation auto
+ arp timeout 1200
+ no mop enabled
+ no mop sysid
+!
+interface GigabitEthernet4
+ no ip address
+ negotiation auto
+ no mop enabled
+ no mop sysid
+!
+router omp
+!
+ip forward-protocol nd
+no ip http server
+ip http secure-server
+!
+ip route 0.0.0.0 0.0.0.0 10.10.23.13
+ip route vrf Mgmt-intf 0.0.0.0 0.0.0.0 10.10.20.254
+ip ssh version 2
+ip scp server enable
+!
+!
+!
+!
+!
+!
+!
+!
+!
+control-plane
+!
+!
+!
+!
+!
+!
+line con 0
+ stopbits 1
+ speed 115200
+line vty 0 4
+!
+!
+!
+!
+!
+!
+netconf-yang
+netconf-yang feature candidate-datastore
+end
