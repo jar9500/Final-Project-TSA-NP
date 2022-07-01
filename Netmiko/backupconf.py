@@ -1,30 +1,108 @@
 from netmiko import Netmiko
 from netmiko import ConnectHandler
+from netmiko.ssh_exception import NetmikoAuthenticationException
+from netmiko.ssh_exception import NetmikoTimeoutException
+from paramiko.ssh_exception import SSHException
+import getpass
 import os
 from datetime import datetime
 
-today = datetime.today().strftime('%d-%m-%Y-%H:%M:%S')
-path = "../Backup Configuration"
+def backup():
+    os.system("clear")
+    today = datetime.today().strftime("%d-%m-%Y-%H:%M:%S")
+    path = "../Backup Configuration"
+    namedev = input("Nama Device : ")
+    device = {
+            "device_type": input("Tipe Device : "),
+            "ip": input("IP X.X.X.X : "),
+            "username": input("Username : "),
+            "password": getpass.getpass("Password : "),
+    }
+    try:
+        net_connect = ConnectHandler(**device)
+    except NetMikoTimeoutException:
+        print ("Connection Time Out, Silahkan Cek Koneksi")
+    except AuthenticationException:
+        print ("Authentication Failed, Silahkan Cek Username/Password")
+    except SSHException:
+        print ("SSH Failed, Pastikan SSH Aktif")
 
-csr1kv = {
-        "device_type": "cisco_ios",
-        "ip": "192.168.56.117",
-        "username": 'cisco',
-        "password": 'cisco123!',
-}
-try:
-    net_connect = ConnectHandler(**csr1kv)
-except NetMikoTimeoutException:
-    print ('Connection Time Out, Silahkan Cek Koneksi')
-except AuthenticationException:
-    print ('Authentication Failed, Silahkan Cek Username/Password')
-except SSHException:
-    print ('SSH Failed, Pastikan SSH Aktif')
+    print ()
+    print ("Memulai Backup Konfigurasi...")
+    command = net_connect.send_command("show running-config")
+    savefile = os.path.join(path, str(namedev)+"_"+str(today)+".txt")
+    save = open(savefile,"w")
+    save.write(command)
+    save.close
+    print ("Selesai Backup...")
+    print()
+    pilih = input("Ingin backup lagi? (y/n) ")
+    if pilih =="y" or pilih =="Y":
+        backup()
+    else:
+        main()
 
-print ('Memulai Backup Konfigurasi')
-runningconfig = net_connect.send_command('show running-config')
-savefile = os.path.join(path, "csr1kv-"+str(today)+".txt")
-save = open(savefile,"w")
-save.write(runningconfig)
-save.close
-print ('Selesai Backup')
+def ipintbr():
+    os.system("clear")
+    device = {
+            "device_type": input("Tipe Device : "),
+            "ip": input("IP X.X.X.X : "),
+            "username": input("Username : "),
+            "password": getpass.getpass("Password : "),
+    }
+    net_connect = ConnectHandler(**device)
+    command = net_connect.send_command("show ip int br")
+    print ()
+    print (command)
+    print ()
+    pilih = input("Melihat IP Int Brief Device lain? (y/n) ")
+    if pilih =="y" or pilih =="Y":
+        ipintbr()
+    else:
+        main()
+
+def runconf():
+    os.system("clear")
+    device = {
+            "device_type": input("Tipe Device : "),
+            "ip": input("IP X.X.X.X : "),
+            "username": input("Username : "),
+            "password": getpass.getpass("Password : "),
+    }
+    net_connect = ConnectHandler(**device)
+    command = net_connect.send_command("show running-config")
+    print ()
+    print (command)
+    print ()
+    pilih = input("Melihat Running-Config Device lain? (y/n) ")
+    if pilih =="y" or pilih =="Y":
+        runconf()
+    else:
+        main()
+
+def main():
+    os.system("clear")
+    print ("Program Backup Konfigurasi Netmiko Python")
+    print ("=================================")
+    print ()
+    print ("1. Backup Konfigurasi")
+    print ("2. Show Running-Config")
+    print ("3. Melihat IP Interface Brief")
+    print ("4. Keluar")
+    print ()
+    try:
+        pilih = int(input("Input Pilihan 1-4 : "))
+        if pilih == 1:
+            backup()
+        elif pilih == 2:
+            runconf()
+        elif pilih == 3:
+            ipintbr()
+        elif pilih == 4:
+            exit()
+        else:
+            main()
+    except ValueError:
+        main()
+
+main()
