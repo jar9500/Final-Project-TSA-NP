@@ -1,0 +1,106 @@
+system
+ host-name               vbond
+ system-ip               10.10.1.3
+ site-id                 101
+ admin-tech-on-failure
+ no route-consistency-check
+ no vrrp-advt-with-phymac
+ organization-name       "DevNet Sandbox"
+ upgrade-confirm         15
+ vbond 10.10.20.80 local
+ aaa
+  auth-order local radius tacacs
+  usergroup basic
+   task system read write
+   task interface read write
+  !
+  usergroup netadmin
+  !
+  usergroup operator
+   task system read
+   task interface read
+   task policy read
+   task routing read
+   task security read
+  !
+  usergroup tenantadmin
+  !
+  user admin
+   password $6$fjPGFBUvcLl2Z3aU$PRf36MvX2K2/RWzsoFjlp.UqugQYqRlKQEtjKW2tbJSwT4kjKFMZIbcf6e/zmWzP2DcPrD5E3Tf3tqx/M1inC1
+  !
+  user ciscotacro
+   description CiscoTACReadOnly
+   group       operator
+   status      enabled
+  !
+  user ciscotacrw
+   description CiscoTACReadWrite
+   group       netadmin
+   status      enabled
+  !
+ !
+ logging
+  disk
+   enable
+  !
+ !
+ ntp
+  parent
+   no enable
+   stratum 5
+  exit
+  server 10.17.251.250
+   version 4
+  exit
+ !
+ support
+  zbfw-tcp-finwait-time 30
+  zbfw-tcp-idle-time    3600
+  zbfw-tcp-synwait-time 30
+  zbfw-udp-idle-time    30
+ !
+!
+omp
+ no shutdown
+ graceful-restart
+ advertise connected
+ advertise static
+!
+security
+ ipsec
+  authentication-type ah-sha1-hmac sha1-hmac
+ !
+!
+vpn 0
+ dns 10.17.248.11 primary
+ dns 10.17.248.12 secondary
+ interface ge0/0
+  ip address 10.10.20.80/24
+  ipv6 dhcp-client
+  tunnel-interface
+   encapsulation ipsec
+   allow-service all
+   no allow-service bgp
+   allow-service dhcp
+   allow-service dns
+   allow-service icmp
+   allow-service sshd
+   allow-service netconf
+   no allow-service ntp
+   no allow-service ospf
+   no allow-service stun
+   allow-service https
+  !
+  no shutdown
+ !
+ ip route 0.0.0.0/0 10.10.20.254
+ ip route 10.10.16.0/20 10.10.20.182
+ ip route 10.10.23.0/24 10.10.20.181
+!
+vpn 512
+ interface eth0
+  ip dhcp-client
+  ipv6 dhcp-client
+  no shutdown
+ !
+!
